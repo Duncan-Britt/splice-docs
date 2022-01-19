@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <title>Splice Lang</title>
+  <!-- Styles -->
+  <link rel="stylesheet" href="stylesheets/semantic.css">
+  <link rel="stylesheet" href="stylesheets/index.css">
+
+  <!-- Prism -->
+  <link rel="stylesheet" href="javascripts/node_modules/prismjs/themes/prism-okaidia.css">
+  <script src="javascripts/node_modules/prismjs/prism.js"></script>
+
+  <!-- JavaScripts -->
+  <script src="javascripts/splicelang.js"></script>
+  <script src="javascripts/main.js" defer></script>
+</head>
+<body>
+  <script id="template" type="text/x-template">
+  <header>
+    <h1>Splice Lang</h1>
+    <nav>
+      <ul>
+        (:~ each chapters as 'chapter {
+        <li><a class="headerLink" href="#(: chapter.id :)">(: chapter.name :)</a></li>
+        }:)
+
+        <li>
+          <a target="_blank" rel="noopener noreferrer" href="https://github.com/Duncan-Britt/Splice-Lang">Source</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  (:~ each chapters as 'chapter {
+    (:~ partial sidebar_template {}:)
+  }:)
+  </script>
+
+  <script id="sidebar_template" type="text/x-template">
+    <aside class="sidebar (: chapter.id :)">
+      (:~ def 'fruits chapter.pages {}:)
+      <nav>
+        (:~ each fruits as 'page {
+        <ul>
+          <li><a class="pageLink" href="#(: page.id :)">(: page.title :)</a></li>
+          <ul>
+            (:~ each page.articles as 'article {
+            <li><a class="articleLink (: page.id :)" href="#(: article.id :)">(: article.title :)</a></li>
+            }:)
+          </ul>
+        </ul>
+        }:)
+      </nav>
+    </aside>
+  </script>
+
+  <main>
+    <section class="chapter" data-name="Language Guide" loading="lazy">
+      <section class="page">
+        <h1>Tour of Splice</h1>
+        <section class="article">
+          <h2>Splice is a templating language</h2>
+          <p>Splice supports nesting, partial templates, iterators, conditionals, variable assignment, local scope, comments, escape characters, and escapes HTML by default. In its minified form, it is only 2.16 KB, uncompressed, and has no dependencies. This website uses Splice clientside to render the sidebar and header.</p>
+        </section>
+        <section class="article">
+          <h2>Download</h2>
+          <p>The Splice engine can can be downloaded <a href="#">here</a> and (minified) <a href="#">here</a> as a JavaScript file.</p>
+
+        </section>
+        <section class="article">
+          <h2>HTML Templating</h2>
+          <p>Include a script tag in your html file with an id of <code>template</code>, or a custom id if you prefer. Set the <code>type</code> attribute to <code>text/x-template</code>.</p>
+
+          <pre><code class="language-html">
+&lt;script id="template" type="text/x-template"&gt;
+  &lt;ul&gt;
+    (:~ each chapters as 'chapter {
+    &lt;li&gt;
+      &lt;a class="headerLink" href="#(: chapter.id :)"&gt;(: chapter.name :)&lt;/a&gt;
+    &lt;/li&gt;
+    }:)
+  &lt;/ul&gt;
+&lt;/script&gt;
+          </code></pre>
+
+<!-- <script id="template" type="text/x-template">
+  <ul>
+    (:~ each chapters as 'chapter {
+    <li>
+      <a class="headerLink" href="#(: chapter.id :)">(: chapter.name :)</a>
+    </li>
+    }:)
+  </ul>
+</script> -->
+
+          <p>Make sure to also link to a file containing the Splice JavaScript engine before linking to JS files which utilize Splice.</p>
+
+          <pre><code class="language-html">
+&lt;head&gt;
+  &lt;!-- ... --&gt;
+  &lt;script src="javascripts/splice.js"&gt;&lt;/script&gt;
+  &lt;!-- ... --&gt;
+&lt;/head&gt;
+          </code></pre>
+
+  <!-- <head> -->
+    <!-- ... -->
+    <!-- <script src="javascripts/splicelang.js"></script> -->
+    <!-- ... -->
+  <!-- </head> -->
+
+
+          <p>Call <code>Splice.render</code> and watch your template be rendered in place!</p>
+
+          <pre><code class="language-javascript">
+Splice.render(yourData, "#id-of-script-tag");
+          </code></pre>
+
+          <p>If your template script tag has an id of "template", you may omit the CSS selector.</p>
+
+          <pre><code class="language-javascript">
+Splice.render(yourData);
+          </code></pre>
+
+          <p>For more control, call <code>Splice.compile</code> to return a function which returns a string for a given scope.</p>
+
+          <pre><code class="language-javascript">
+const evaluatorFn = Splice.compile(templateText);
+const finalText = evaluatorFn({
+  chapters: [{
+    id: 2,
+    name: 'The Vanishing Glass',
+  }, {
+    id: 3,
+    name: 'The Letters from No One',
+  }]
+});
+          </code></pre>
+        </section>
+
+        <section class="article">
+          <h2>Partials</h2>
+          <p>To register your partial template, simply invoke <code>Splice.registerPartial</code> with the id of your template.</p>
+
+          <pre><code class="language-javascript">
+Splice.registerPartial('sidebar_template');
+          </code></pre>
+
+          <p>Invoke a partial in your template:</p>
+
+          <pre><code class="language-splice">
+(:~ partial sidebar_template {}:)
+          </code></pre>
+        </section>
+
+        <section class="article">
+          <h2>Iteration</h2>
+          <p>To iterate through a collection, invoke <code>each</code> and pass an array. Within the body of <code>each</code>, you may reference elements of the collection with <code>$</code>.</p>
+
+          <pre><code class="language-splice">
+(:~ each baskets {
+  &lt;p&gt;(: $ :)&lt;/p&gt;
+}:)
+          </code></pre>
+          <!-- (:~ each baskets {
+            <p>(: $ :)</p>
+          }:) -->
+
+          <p>Alternatively, you may refer to elements of your collection using an alias defined with <code><b>as</b></code>.</p>
+
+          <pre><code class="language-splice">
+(:~ each baskets as 'aBasket {
+  &lt;p&gt;(: aBasket :)&lt;/p&gt;
+}:)
+          </code></pre>
+          <!-- (:~ each baskets as 'aBasket {
+            <p>(: aBasket :)</p>
+          }:) -->
+
+          <p>Scopes may be nested as deeply as you please.</p>
+
+          <pre><code class="language-splice">
+(:~ each valley.o as 'bogs {
+  (:~ each bogs as 'holes {
+    (:~ each holes as 'tree {
+      &lt;p&gt;A rare (: tree :), a rattlin (: tree :)&lt;/p&gt;
+    }:)
+  }:)
+}:)
+          </code></pre>
+          <!-- (:~ each valley.o as 'bogs {
+            (:~ each bogs as 'holes {
+              (:~ each holes as 'tree {
+                <p>A rare (: tree :), a rattlin (: tree :)</p>
+              }:)
+            }:)
+          }:) -->
+        </section>
+
+        <section class="article">
+          <h2>Conditionals</h2>
+          <p>Splice has two conditional functions: <code><b>if</b></code> and <code><b>unless</b></code>. They both takes one argument and a body which may be evaluated depending on whether the argument is truthy or falsy.</p>
+
+          <pre><code class="language-splice">
+(:~ if isValid {
+&lt;p&gt;Access Granted&lt;/p&gt;
+}:)
+
+(:~ unless isValid {
+&lt;p&gt;Access Denied&lt;/p&gt;
+}:)
+          </code></pre>
+<!-- <p>Access Granted</p> -->
+        </section>
+
+        <section class="article">
+          <h2>Assignment</h2>
+          <p>Assign bindings in the current scope using the assignment function: <code><b>def</b></code>.</p>
+          <pre><code class="language-splice">
+(:~ def 'snack meal {}:)
+          </code></pre>
+          <p>Then use the new binding to access its value within the current scope.</p>
+          <pre><code class="language-splice">
+&lt;p&gt;I'm just going to have a (: snack :).&lt;/p&gt;
+          </code></pre>
+          <!-- <p>I'm going to have a (: snack :).</p> -->
+        </section>
+
+        <section class="article">
+          <h2>Properties</h2>
+          <p>If a binding references an object, access its properties using dot notation.</p>
+
+          <pre><code class="language-splice">
+(: person.community.region :)
+          </code></pre>
+        </section>
+
+        <section class="article">
+          <h2>Execution Context</h2>
+          <p><code><b>in</b></code> takes a scope object uses it to create different context for evaluating bindings within its body. For instance:</p>
+
+          <pre><code class="language-splice">
+&lt;li&gt;(: person.name :)&lt;/li&gt;
+&lt;li&gt;(: person.job :)&lt;/li&gt;
+          </code></pre>
+<!-- <h1>(: person.name :)</h1>
+<h1>(: person.job :)</h1> -->
+
+          <p>becomes:</p>
+
+          <pre><code class="language-splice">
+(:~ in person {
+  &lt;li&gt;(: name :)&lt;/li&gt;
+  &lt;li&gt;(: job :)&lt;/li&gt;
+}:)
+          </code></pre>
+<!-- (:~ in person {
+  <h1>(: name :)</h1>
+  <h1>(: job :)</h1>
+}:) -->
+
+        </section>
+
+        <section class="article">
+          <h2>Escaping</h2>
+          <p>By default, text referenced by a binding is HTML-escaped to avoid cross-site scripting. To render unescaped html, use <code>(:!</code> instead of <code>(:</code> when evaluating a binding.</p>
+          <pre><code class="language-splice">
+(:~ def 'unsafe '&lt;a&gt;docs&lt;/a&gt; {}:)
+&lt;li&gt;(:! unsafe :)&lt;/li&gt;
+          </code></pre>
+
+          <p>In addition, any character anywhere in a Splice template may be explicitly escaped by prefixing it with <code>\</code>. This prevents a character from being evaluated as syntax. For instance, <code>\(:</code> will render <code>(:</code> as text. To display a backslash in the template, you must escape it.</p>
+
+          <pre><code class="language-splice">
+&lt;p&gt;A Splice expression begins with \(: and ends with \:).&lt;/p&gt;
+          </code></pre>
+        </section>
+
+        <section class="article">
+          <h2>Browser Compatibility</h2>
+          <p>The splice source code makes use of arrow functions which aren't supported by some older browsers such as Internet Explorer 11. The source code can easily be transpiled to es5 compatible code using a tool like Babel.</p>
+        </section>
+      </section>
+
+      <section class="page">
+        <h1>Splice in Depth</h1>
+        <section class="article">
+          <h2>Expressions</h2>
+          <p>Every Splice expression returns a string which is inserted in place within the template at evalution time, even if it is an empty string. Splice expressions begin with <code><b>(:</b></code> and end with <code><b>:)</b></code></p>
+
+          <p>There are two kinds of Splice expressions: evaluations and invocations. Evalutions are used to evaluate a binding in scope and return its text content.</p>
+
+          <p><b>Evaluate a binding:</b></p>
+          <pre><code class="language-splice">
+<li>(: id :)</li>
+          </code></pre>
+
+          <p>Function invocation begins with <code><b>(:~</b></code> and always contains a body defined by opening and closing brackets <code>{}</code> which may or may not be evaluated. Function bodies can contain either kind of expression or text.
+
+          <p><b>Evaluate a function:</b></p>
+          <pre><code class="language-splice">
+(:~ if response {
+  &lt;p&gt;Response received!&lt;/p&gt;
+  (:~ each response.headers {
+    &lt;li&gt;(: $ :)&lt;/li&gt;
+  }:)
+}:)
+          </code></pre>
+          <!-- (:~ if response {
+            <p>Response received!</p>
+            (:~ each response.headers {
+              <li>(: $ :)</li>
+            }:)
+          }:)           -->
+        </section>
+
+        <section class="article">
+          <h2>Scope</h2>
+          <p>Rendering a Splice template requires an object representing the global scope of the template. Within the template, properties of the global scope object can be accessed by bindings. Invoking <code>Splice.compile</code> returns a function which takes a scope and uses it to evaluate its internal AST.</p>
+
+          <pre><code class="language-javascript">
+const template = `
+  (:~ each pages as 'page {
+    &lt;p&gt;(: page.title :)&lt;/p&gt;
+    (:~ if page.articles {
+    &lt;ul&gt;
+      (:~ each articles as 'article {
+      &lt;li&gt;(: article :)&lt;/li&gt;
+      }:)
+    &lt;/ul&gt;
+    }:)
+  }:)
+`
+const scope = {
+  pages: [{
+    title: 'Unforseen Consequences',
+    articles: ['When to expect the unexpe....', 'Losing sight...'],
+  }, {
+    title: 'New Beginnings',
+    articles: ['As Simon discovered....', 'Lab test demonstrate...'],
+  }, {
+    title: 'Unforseen Consequences',
+    articles: false,
+  }]
+}
+
+Splice.compile(template)(scope);
+          </code></pre>
+
+          <p>Function bodies define a new scope. Splice uses lexical scoping rules, meaning that inner functions have access to variables defined in the outer scope but not vice-versa.</p>
+
+          <p>The exception is that the <code>in</code> function allows a user to set a new context for evaluating bindings, and in doing so, truncates the scope.</p>
+        </section>
+
+        <section class="article">
+          <h2>Data Types</h2>
+          <p>Within a Splice template there are two data types that can be created: <b>text</b> and <b>atoms</b>.</p>
+          <h3>Text</h3>
+          <p>Text literals are defined by any set of characters outside of a Splice expression or within a function body not enclosed by <code>(: :)</code>.</p>
+          <h3>Atoms</h3>
+          <p>Atom literals are defined by prefixing a set of non-whitespace characters with a single quote mark <code>'</code> within a list of arguments to a function invocation. Atoms are used to pass text to a function invocation.</p>
+
+          <pre><code class="language-splice">
+(:~ def 'pop soda {}:)
+          </code></pre>
+
+          <p>All else is either syntax or bindings which can reference either built in functions or data stored in scope. Javascript objects and arrays stored in scope are treated by Splice as 'scope objects'. Strings are treated as text.</p>
+        </section>
+
+        <section class="article">
+          <h2>Source</h2>
+          <p>The source code is devided in five sections.</p>
+          <ul>
+            <li><p>Parser</p></li>
+            <li><p>Evaluator</p></li>
+            <li><p>In-template functions</p></li>
+            <li><p>Internal Utility Functions</p></li>
+            <li><p>Public Interface</p></li>
+          </ul>
+          <p>The in-template functions section will be of most interest if you'd like to implement your own helper functions. The first parameter must reserved for the scope, and the last for the body of the function (an abstract syntax tree).</p>
+
+          <p>Source <a target="_blank" rel="noopener noreferrer" href="https://github.com/Duncan-Britt/Splice-Lang">here</a></p>
+
+          <pre><code class="language-javascript">
+const Splice = (function() {
+  // IN-TEMPLATE HELPER FUNCTIONS
+  // ============================
+
+  //...
+
+  // if :: Object, Object, Array{Object} -&gt; String
+  templateFns.if = (scope, expr, body) =&gt; {
+    const innerScope = Object.assign({}, scope);
+    return evaluate(expr, innerScope) ? evaluateAll(body, innerScope) : '';
+  };
+
+  //...
+}());
+          </code></pre>
+
+        </section>
+      </section>
+    </section>
+
+    <section class="chapter" data-name="API reference" loading="lazy">
+      <section class="page">
+        <h1>Splice Functions</h1>
+        <section class="article">
+          <h2>Splice.compile</h2>
+          <p><code>:: String -> [Object] -> String </code></p>
+          <p>Returns a function which accepts a scope object and returns a string.</p>
+
+          <pre><code class='language-javascript'>
+const fn = Splice.compile('&lt;p&gt;(: message :)&lt;/p&gt;');
+fn({ message: 'Hello, World!' });
+// returns "&lt;p&gt;Hello, World!"&lt;/p&gt;
+          </code></pre>
+        </section>
+        <section class="article">
+          <h2>Splice.registerPartial</h2>
+          <p><code>:: String, String</code></p>
+          <p><code>:: String</code></p>
+          <p>The first argument sets the name for the partial template that can be used to access it within your Splice template(s). <code>Splice.registerPartial</code> takes a seecond optional argument which if present, is used as the partial template input string. If not present, <code>Splice.registerPartial</code> assumes the name of the partial (argument 1) is also the id of a DOM element containing the partial template.</p>
+
+          <pre><code class='language-javascript'>
+Splice.registerPartial('sidebar');
+          </code></pre>
+          <pre><code class='language-javascript'>
+const partialTemplate = `
+&lt;aside class="sidebar (: chapter.id :)"&gt;
+  &lt;nav&gt;
+    (:~ each chapter.pages as 'page {
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a class="pageLink" href="#(: page.id :)"&gt;(: page.title :)&lt;/a&gt;&lt;/li&gt;
+      &lt;ul&gt;
+        (:~ each page.articles as 'article {
+        &lt;li&gt;&lt;a class="articleLink (: page.id :)" href="#(: article.id :)"&gt;(: article.title :)&lt;/a&gt;&lt;/li&gt;
+        }:)
+      &lt;/ul&gt;
+    &lt;/ul&gt;
+    }:)
+  &lt;/nav&gt;
+&lt;/aside&gt;
+`
+
+Splice.registerPartial('sidebar', partialTemplate);
+          </code></pre>
+
+          <p>See also <code><a href="#partial" data-pageid="#template_functions">Template Functions::partial</a></code></p>
+        </section>
+        <section class="article">
+          <h2>Splice.render</h2>
+          <p><code>:: [Object], String</code></p>
+          <p><code>:: [Object]</code></p>
+          <p>The second argument defaults to "#template" and is used as a CSS selector to identify the template within the DOM. The first argument represents the scope for the evaluation of the template.</p>
+
+          <p><code>Splice.render</code> will render the template in place, meaning the resulting HTML will be used to insert DOM nodes in place of where the template <code>&lt;p&gt;script&lt;/p&gt;</code> tag had been in the HTML file.</p>
+
+          <pre><code class='language-javascript'>
+Splice.render({ message: 'Hello, World!' });
+          </code></pre>
+
+          <pre><code class='language-javascript'>
+Splice.render({ message: 'Hello, World!' }, "#selector");
+          </code></pre>
+        </section>
+      </section>
+
+      <section class="page">
+        <h1>Template Functions</h1>
+        <section class="article">
+          <h2>each</h2>
+          <p><code>:: Array{}, "as" Atom -> String</code></p>
+          <p><code>:: Array{} -> String</code></p>
+
+          <p><code>each</code> is used to iterate through a collection specified by the first argument. Elements can be referenced within the function body using <code>$</code>. Appending <code>as 'alias</code> to the arguments list defines an alias for the current element in the collection. <code>each</code> evaluates its body with a new scope giving access to the current member of the collection and returns a string of these evaluations concatenated together.</p>
+
+          <pre><code class='language-splice'>
+&lt;ul&gt;
+(:~ each library as 'book {
+  &lt;li&gt;&lt;p&gt;(: book.knowledge :)&lt;/p&gt;&lt;/li&gt;
+}:)
+&lt;/ul&gt;
+          </code></pre>
+
+        </section>
+        <section class="article">
+          <h2>comment</h2>
+          <p><code>:: _ -> String</code></p>
+          <p><code>comment</code> takes no arguments and returns an empty string. The body provides a space for comments. Any function that always returns an empty string can contain comments in its body.</p>
+
+          <pre><code class='language-splice'>
+(:~ comment { This is a comment. }:)
+          </code></pre>
+
+        </section>
+        <section class="article">
+          <h2>def</h2>
+          <p><code>:: Atom, b -> String</code></p>
+          <p><code>def</code> is used to assign variables. It returns an empty string.</p>
+
+          <pre><code class='language-splice'>
+(:~ def 'list array {}:)
+          </code></pre>
+
+          <p>No we can use <code>list</code> to reference <code>array</code>.</p>
+
+          <pre><code class='language-splice'>
+&lt;ul&gt;
+(:~ each list {
+  &lt;li&gt;&lt;p&gt;(: $ :)&lt;/p&gt;&lt;/li&gt;
+}:)
+&lt;/ul&gt;
+          </code></pre>
+
+        </section>
+        <section class="article">
+          <h2>if</h2>
+          <p><code>:: a -> String</code></p>
+          <p>The body of <code>if</code> will be evaluated and returned if the argument to <code>if</code> is truthy. Otherwise, it returns an emtpy string.</p>
+
+          <pre><code class='language-splice'>
+(:~ if isTrue {
+  &lt;li&gt;&lt;p&gt;(: big :)&lt;/p&gt;&lt;/li&gt;
+}:)
+          </code></pre>
+        </section>
+        <section class="article">
+          <h2>in</h2>
+          <p><code>:: Object -> String</code></p>
+          <p><code>in</code> limits the scope of its body to the argument that is passed in. It can then evaluate bindings in this new context. For instance, suppose we have a global scope that looks like this:</p>
+          <pre><code class='language-javascript'>
+Splice.compile(html)({
+  context: { foo: 'Hello, World!' }
+})
+          </code></pre>
+
+          <p>Instead of using dot notation to access <code>context.foo</code>, we could use <code>in:</code></p>
+
+          <pre><code class='language-splice'>
+(:~ in context {
+  &lt;li&gt;&lt;p&gt;(: foo :)&lt;/p&gt;&lt;/li&gt;
+}:)
+          </code></pre>
+        </section>
+
+        <section class="article">
+          <h2>partial</h2>
+          <p><code>:: Array{Object} -> String</code></p>
+          <p>Used in conjunction with <code>Splice.registerPartial</code> to render a partial template.</p>
+<pre><code class='language-splice'>
+(:~ each chapters as 'chapter {
+  (:~ partial sidebar_template {}:)
+}:)
+</code></pre>
+          <p>See also <code><a href="#spliceregisterpartial" data-pageid="#splice_functions">Splice Functions::partial</a></code></p>
+        </section>
+
+        <section class="article">
+          <h2>unless</h2>
+          <p><code>:: a -> String</code></p>
+          <p>The body of <code>unless</code> will be evaluated and returned if the argument to <code>unless</code> is falsy. Otherwise, it returns an emtpy string.</p>
+
+          <pre><code class='language-splice'>
+(:~ unless error {
+  &lt;li&gt;&lt;p&gt;(: headers.contentType :)&lt;/p&gt;&lt;/li&gt;
+}:)
+          </code></pre>
+        </section>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,114 @@
+:root {
+  --link: #00b3b3;
+  --visited: #80796f;
+  --header: #000;
+  --bg-code: rgba(0, 0, 0, 7%);
+  --aside-bg: #b60045;
+}
+
+a:link {
+  color: var(--link);
+}
+a:visited {
+  color: var(--link);
+}
+a:focus, a:hover {
+  color: var(--hover);
+}
+a:active {
+  color: var(--link);
+}
+
+header {
+  position: fixed;
+  z-index: 2;
+  background-color: #f7f7f7;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.page {
+  position: absolute;
+  top: 8em;
+  left: 20em;
+  min-height: 100vh;
+  width: 50vw;
+  background: var(--bgcolor);
+}
+
+header * {
+  display: inline-block;
+  margin-right: 1em;
+}
+
+/* User for underling active page */
+.currentPageLink {
+  border-bottom: 1px solid;
+}
+
+input[type="search"] {
+  border-radius: 1rem;
+  min-width: 40px;
+  max-width: 150px;
+  width: 10vw;
+  padding: .5em 1em .5em 2em;
+  background: #fff url(../images/search.83621669.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 6px;
+  background-size: 1.4em;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow-y: scroll;
+  left: 0;
+  width: 18rem;
+  padding-right: 20px;
+  height: 100%;
+  display: none;
+}
+
+.sidebar nav {
+  margin-top: 8em;
+}
+
+.sidebar nav ul ul {
+  margin-top: 20px;
+}
+
+.sidebar a {
+  margin-bottom: 12px;
+}
+
+.chapter {
+  display: none;
+}
+
+.page {
+  display: none;
+}
+
+.articleLink {
+  display: none;
+}
+
+/* Needed for anchor links with fixed header */
+.article:target::before {
+  content: "";
+  display: block;
+  height: 80px;
+  margin: -80px 0 0;
+}
+
+/* =========== */
+
+.current {
+  display: block;
+}
+
+main {
+  margin-left: 20rem;
+}
