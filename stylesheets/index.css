@@ -23,6 +23,8 @@ header {
   position: fixed;
   z-index: 2;
   background-color: #f7f7f7;
+  left: 0;
+  padding-left: 50px;
   width: 100%;
   white-space: nowrap;
 }
