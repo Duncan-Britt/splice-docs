@@ -1,46 +1,38 @@
-// Need to be able to click on chapters and be brought to top of page!!!
-
-class Chapter {
-  constructor(name, id, pages) {
-    this.name = name;
-    this.id = id;
-    this.pages = pages;
-  }
-
-  static create(el) {
-    const name = el.dataset.name;
-    let id = formatId(name);
-    el.classList.add(id);
-    return new Chapter(name, id, sA('.page', el).map(Page.create));
-  }
+function Chapter(name, id, pages) {
+  this.name = name;
+  this.id = id;
+  this.pages = pages;
 }
 
-class Page {
-  constructor(title, id, articles) {
-    this.title = title;
-    this.id = id;
-    this.articles = articles;
-  }
-
-  static create(el) {
-    const titleEl = s('h1', el);
-    const title = titleEl.textContent;
-    el.id = formatId(title);
-    return new Page(title, el.id, sA('.article', el).map(Article.create));
-  }
+Chapter.create = function(el) {
+  const name = el.dataset.name;
+  let id = formatId(name);
+  el.classList.add(id);
+  return new Chapter(name, id, sA('.page', el).map(Page.create));
 }
 
-class Article {
-  constructor(title, id) {
-    this.title = title;
-    this.id = id;
-  }
+function Page(title, id, articles) {
+  this.title = title;
+  this.id = id;
+  this.articles = articles;
+}
 
-  static create(el) {
-    const title = s('h2', el).textContent
-    el.id = formatId(title);
-    return new Article(title, el.id);
-  }
+Page.create = function(el) {
+  const titleEl = s('h1', el);
+  const title = titleEl.textContent;
+  el.id = formatId(title);
+  return new Page(title, el.id, sA('.article', el).map(Article.create));
+}
+
+function Article(title, id) {
+  this.title = title;
+  this.id = id;
+}
+
+Article.create = function(el) {
+  const title = s('h2', el).textContent
+  el.id = formatId(title);
+  return new Article(title, el.id);
 }
 
 // formatId :: String -> String
@@ -67,25 +59,26 @@ function clickHandler(event) {
 
   if (link.matches('.headerLink')) {
 
-    sA('.current').forEach(el => {
+    sA('.current').forEach(function(el) {
       el.classList.remove('current');
     });
     const className = event.target.hash.replace('#', '.');
-    sA(className).forEach(el => el.classList.add('current'));
+
+    sA(className).forEach(function(el) { el.classList.add('current') });
     const id = s('a', s('.sidebar' + className)).hash;
     s(id).classList.add('current');
-    sA(id.replace('#', '.')).forEach(articleLink => {
+    sA(id.replace('#', '.')).forEach(function(articleLink) {
       articleLink.classList.add('current');
     });
     window.scroll(0, 0);
 
   } else if (link.matches('.pageLink')) {
 
-    sA('.page').forEach(el => el.classList.remove('current'));
-    sA('.articleLink').forEach(link => link.classList.remove('current'));
+    sA('.page').forEach(function(el) { el.classList.remove('current') });
+    sA('.articleLink').forEach(function(link) { link.classList.remove('current') });
     s(link.hash).classList.add('current');
     const pageClass = link.hash.replace('#', '.');
-    sA(pageClass).forEach(link => link.classList.add('current'));
+    sA(pageClass).forEach(function(link) { link.classList.add('current') });
     event.preventDefault();
     window.scroll(0, 0);
 
@@ -95,12 +88,12 @@ function clickHandler(event) {
 
   } else if (link.dataset.pageid) {
 
-    sA('.page').forEach(el => el.classList.remove('current'));
-    sA('.articleLink').forEach(link => link.classList.remove('current'));
+    sA('.page').forEach(function(el) { el.classList.remove('current') });
+    sA('.articleLink').forEach(function(link) { link.classList.remove('current') });
     s(link.dataset.pageid).classList.add('current');
-    sA('.articleLink').filter(a => {
+    sA('.articleLink').filter(function(a) {
       return [].includes.call(a.classList, link.dataset.pageid.slice(1));
-    }).forEach(a => a.classList.add('current'));
+    }).forEach(function(a) { a.classList.add('current') });
     s(link.hash).scrollIntoView(true);
 
   }
@@ -109,15 +102,16 @@ function clickHandler(event) {
 // DRIVER SCRIPT
 // =============
 
-const chapters = sA('.chapter').reduce((arr, el) =>
-  arr.concat(Chapter.create(el)), []);
+const chapters = sA('.chapter').reduce(function(arr, el) {
+  return arr.concat(Chapter.create(el))
+}, []);
 
 Splice.registerPartial('sidebar_template');
 Splice.render({ chapters });
 
-sA('.language_guide').forEach(el => el.classList.add('current'));
+sA('.language_guide').forEach(function (el) { el.classList.add('current') });
 s('#tour_of_splice').classList.add('current');
-sA('.tour_of_splice').forEach(articleLink => {
+sA('.tour_of_splice').forEach(function(articleLink) {
   articleLink.classList.add('current');
 });
 
@@ -125,8 +119,9 @@ document.addEventListener('click', clickHandler);
 
 // SYNTAX HIGHLIGHTING
 // ===================
-setTimeout(() => {
-  sA('code.language-splice').forEach(node => {
+
+setTimeout(function() {
+  sA('code.language-splice').forEach(function(node) {
     let textNode = node.firstChild;
     let html = '<code class="language-splice">' + paint(node.textContent) + '</code>';
     replaceNodeWithHTML(node, html)
@@ -137,36 +132,50 @@ setTimeout(() => {
 function paint(innerText) {
   const FNAMES = ['each', 'comment', 'def', 'if', 'in', 'partial', 'unless']
 
-  let result = FNAMES.reduce((text, fName) =>
-    text.replace(new RegExp(' ' + fName + ' ', 'g'), paintFn(fName)),
-  escapeHTML(innerText));
+  let result = FNAMES.reduce(function(text, fName) {
+    return text.replace(new RegExp(' ' + fName + ' ', 'g'), paintFn(fName));
+  }, escapeHTML(innerText));
 
   const KEYWORDS = ['as', '$'];
 
-  result = KEYWORDS.reduce((text, keyword) =>
-    text.replace(new RegExp(' \\' + keyword + ' ', 'g'), paintKeyword(keyword)),
-  result);
+  result = KEYWORDS.reduce(function(text, keyword) {
+    return text.replace(new RegExp(' \\' + keyword + ' ', 'g'), paintKeyword(keyword));
+  }, result);
 
   const atoms = result.match(/&#039;\S+/g);
   if (atoms) {
-    result = atoms.reduce((text, atom) => {
+    result = atoms.reduce(function(text, atom) {
       return text.replace(new RegExp(' ' + atom + ' ', 'g'), paintAtom(atom));
-    },
-    result);
+    }, result);
   }
 
-  let tags = result.match(/(?<!&#039;)&lt;\/?[a-z0-9]+&gt;/g)
+  let tags = getTags(result);
   if (!tags) return result;
 
-  tags = tags.filter(tag =>
-    !(new RegExp('\\(:~' + '[^\\{]*' + tag + '[^\{]*' + '(?=\\{)').test(result))
-  );
+  return tags.reduce(function(text, tag) {
+    return text.replace(new RegExp(tag, 'g'), paintTag(tag));
+  }, result);
+}
 
-  result = tags.reduce((text, tag) =>
-    text.replace(new RegExp(tag, 'g'), paintTag(tag)),
-  result);
+const ESCAPE_QUOTE = '&#039;';
 
-  return result;
+function getTags(text) {
+  const tags = [];
+
+  let tagData;
+  while(tagData = text.match(/&lt;\/?[a-z0-9]+&gt;/)) {
+    let tag = tagData[0];
+
+    if (text.slice(tagData.index - 6, tagData.index) == ESCAPE_QUOTE) {
+      text = text.slice(tagData.index)
+      text = text.slice(text.match(/\s/).index);
+    } else {
+      tags.push(tag);
+      text = text.slice(tag.length + tagData.index);
+    }
+  }
+
+  return tags;
 }
 
 function paintTag(tag) {
@@ -182,67 +191,35 @@ function paintAtom(atom) {
   return ' <span style="color:#96ccff;">' + atom + '</span> ';
 }
 
-// paintFn :: String -> String
+  // paintFn :: String -> String
 function paintFn(fName) {
   return ' <span style="color:#c792ff;">' + fName + '</span> ';
 }
 
-// escapeHTML :: String -> String
+  // escapeHTML :: String -> String
 function escapeHTML(unsafe) {
   return unsafe
-  .replace(/&/g, "&amp;")
-  .replace(/</g, "&lt;")
-  .replace(/>/g, "&gt;")
-  .replace(/"/g, "&quot;")
-  .replace(/'/g, "&#039;");
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
 }
-
-// function paint(node) {
-//   if (hasKeywordOrQuote(node)) {
-//     let text = node.nodeValue;
-//     const keywords = ['each', 'if', 'as', 'end', 'partial'];
-//     keywords.forEach(keyword => {
-//       let re = new RegExp('\\b'+keyword+'\\b')
-//       text = text.replace(re, '<span class="token keyword">' + keyword + '</span>');
-//     });
-//
-//     if (match = node.nodeValue.match(/'\w+/)) {
-//       const quote = match[0];
-//       text = text.replace(quote, '<span class="token string">' + quote + '</span>');
-//     }
-//
-//     replaceNodeWithHTML(node, text);
-//   } else if (node.nodeName == 'SPAN'){
-//     if (!hasKeyword(node.firstChild)) {
-//       node.classList.remove('keyword');
-//     }
-//   }
-
-//   Array.from(node.childNodes).forEach(paint);
-// }
 
 function hasKeyword(node) {
   if (!node.nodeValue) return;
+
   const keywords = ['each', 'if', 'as', 'end', 'partial'];
-  return keywords.some(keyword => node.nodeValue.includes(keyword));
+  return keywords.some(function(keyword) { node.nodeValue.includes(keyword) });
 }
 
 function hasKeywordOrQuote(node) {
   if (!node.nodeValue) return;
   const keywords = ['each', 'if', 'as', 'end', 'partial'];
-  return keywords.some(keyword => {
+  return keywords.some(function(keyword) {
     return node.nodeValue.includes(keyword) || node.nodeValue.match(/'\w+/);
   });
 }
-
-// function elt(name, attrs, ...children) {
-//   const element = document.createElement(name);
-//   Object.keys(attrs).forEach(attr => {
-//     element.setAttribute(attr, attrs[attr]);
-//   });
-//   children.forEach(child => element.appendChild(child));
-//   return element;
-// }
 
 function replaceNodeWithHTML(node, html) {
   const tempContainer = document.createElement('div');
