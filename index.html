@@ -178,7 +178,7 @@ Splice.registerPartial('sidebar_template');
             <p>(: aBasket :)</p>
           }:) -->
 
-          <p>Invocation expressions may be nested as deeply as you please.</p>
+          <p>Invocations may be nested as deeply as you please.</p>
 
           <pre><code class="language-splice">
 (:~ each valley.o as 'bogs {
@@ -561,7 +561,7 @@ Splice.compile(html)({
           <h2>unless</h2>
           <p><code>:: a -> String</code></p>
           <p>The body of <code>unless</code> will be evaluated and returned if the argument to <code>unless</code> is falsy. Otherwise, it returns an emtpy string.</p>
-          
+
           <pre><code class='language-splice'>
 (:~ unless error {
   &lt;li&gt;&lt;p&gt;(: headers.contentType :)&lt;/p&gt;&lt;/li&gt;
