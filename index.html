@@ -94,7 +94,7 @@
   </ul>
 </script> -->
 
-          <p>Make sure to also link to a file containing the Splice JavaScript engine before linking to JS files which utilize Splice.</p>
+          <p>Make sure to also link to a file containing the Splice engine before linking to JS files which utilize Splice.</p>
 
           <pre><code class="language-html">
 &lt;head&gt;
@@ -123,7 +123,7 @@ Splice.render(yourData, "#id-of-script-tag");
 Splice.render(yourData);
           </code></pre>
 
-          <p>For more control, call <code>Splice.compile</code> to return a function which returns a string for a given scope.</p>
+          <p>For more control, call <code>Splice.compile</code> to return a function which returns a string for a given data set.</p>
 
           <pre><code class="language-javascript">
 const evaluatorFn = Splice.compile(templateText);
@@ -147,7 +147,7 @@ const finalText = evaluatorFn({
 Splice.registerPartial('sidebar_template');
           </code></pre>
 
-          <p>Invoke a partial in your template:</p>
+          <p>Render a partial in your template:</p>
 
           <pre><code class="language-splice">
 (:~ partial sidebar_template {}:)
@@ -178,7 +178,7 @@ Splice.registerPartial('sidebar_template');
             <p>(: aBasket :)</p>
           }:) -->
 
-          <p>Scopes may be nested as deeply as you please.</p>
+          <p>Invocation expressions may be nested as deeply as you please.</p>
 
           <pre><code class="language-splice">
 (:~ each valley.o as 'bogs {
@@ -455,7 +455,7 @@ Splice.registerPartial('sidebar', partialTemplate);
           <p><code>:: [Object]</code></p>
           <p>The second argument defaults to "#template" and is used as a CSS selector to identify the template within the DOM. The first argument represents the scope for the evaluation of the template.</p>
 
-          <p><code>Splice.render</code> will render the template in place, meaning the resulting HTML will be used to insert DOM nodes in place of where the template <code>&lt;p&gt;script&lt;/p&gt;</code> tag had been in the HTML file.</p>
+          <p><code>Splice.render</code> will render the template in place, meaning the resulting HTML will be used to insert DOM nodes in place of where the template <code>&lt;script&gt;</code> tag had been in the HTML file.</p>
 
           <pre><code class='language-javascript'>
 Splice.render({ message: 'Hello, World!' });
