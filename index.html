@@ -61,11 +61,11 @@
         <h1>Tour of Splice</h1>
         <section class="article">
           <h2>Splice is a templating language</h2>
-          <p>Splice supports nesting, partial templates, iterators, conditionals, variable assignment, local scope, comments, escape characters, and escapes HTML by default. In its minified form, it is only 2.16 KB, uncompressed, and has no dependencies. This website uses Splice clientside to render the sidebar and header.</p>
+          <p>Splice supports nesting, partial templates, iterators, conditionals, variable assignment, local scope, comments, escape characters, and escapes HTML by default. In its minified form, it is only <b>3.06 KB uncompressed</b>, and has no dependencies. This website uses Splice clientside to render the sidebar and header.</p>
         </section>
         <section class="article">
           <h2>Download</h2>
-          <p>The Splice engine can can be downloaded <a href="#">here</a> and (minified) <a href="#">here</a> as a JavaScript file.</p>
+          <p>The Splice engine can can be downloaded <a target="_blank" href="javascripts/splicelang.js" download="splice.js">here</a> and (minified) <a target="_blank" href="javascripts/splicemini.js" download="splicemini.js">here</a> as a JavaScript file.</p>
 
         </section>
         <section class="article">
@@ -117,7 +117,7 @@
 Splice.render(yourData, "#id-of-script-tag");
           </code></pre>
 
-          <p>If your template script tag has an id of "template", you may omit the CSS selector.</p>
+          <p>If your template script tag has an id of <code>template</code>, you may omit the CSS selector.</p>
 
           <pre><code class="language-javascript">
 Splice.render(yourData);
@@ -279,7 +279,7 @@ Splice.registerPartial('sidebar_template');
 
         <section class="article">
           <h2>Browser Compatibility</h2>
-          <p>The splice source code makes use of arrow functions which aren't supported by some older browsers such as Internet Explorer 11. The source code can easily be transpiled to es5 compatible code using a tool like Babel.</p>
+          <p>Splice does not support Internet Explorer.</p>
         </section>
       </section>
 
@@ -340,7 +340,7 @@ const scope = {
     title: 'New Beginnings',
     articles: ['As Simon discovered....', 'Lab test demonstrate...'],
   }, {
-    title: 'Unforseen Consequences',
+    title: 'A bench in the woods',
     articles: false,
   }]
 }
@@ -372,8 +372,8 @@ Splice.compile(template)(scope);
           <h2>Source</h2>
           <p>The source code is devided in five sections.</p>
           <ul>
-            <li><p>Parser</p></li>
-            <li><p>Evaluator</p></li>
+            <li><p>Lexer & Parser</p></li>
+            <li><p>Generator</p></li>
             <li><p>In-template functions</p></li>
             <li><p>Internal Utility Functions</p></li>
             <li><p>Public Interface</p></li>

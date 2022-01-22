@@ -1,9 +1,7 @@
 :root {
   --link: #00b3b3;
   --visited: #80796f;
-  --header: #000;
-  --bg-code: rgba(0, 0, 0, 7%);
-  --aside-bg: #b60045;
+  --fixed: #f7f7f7;
 }
 
 a:link {
@@ -20,9 +18,9 @@ a:active {
 }
 
 header {
+  background-color: inherit;
   position: fixed;
   z-index: 2;
-  background-color: #f7f7f7;
   left: 0;
   padding-left: 50px;
   width: 100%;
