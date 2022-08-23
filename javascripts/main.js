@@ -72,6 +72,12 @@ function clickHandler(event) {
     });
     window.scroll(0, 0);
 
+    if (link.matches('a[href="#playground"')) {
+      s('header').style.position = 'absolute';
+    } else {
+      s('header').style.position = 'fixed';
+    }
+
   } else if (link.matches('.pageLink')) {
 
     sA('.page').forEach(function(el) { el.classList.remove('current') });
@@ -120,12 +126,12 @@ document.addEventListener('click', clickHandler);
 // Playground
 const codeMirrorSplice = CodeMirror.fromTextArea(s('#splice-play-template'), {
   mode: 'htmlmixed',
-  theme: 'blackboard'
+  theme: 'duotone-light'
 });
 
 const codeMirrorJs = CodeMirror.fromTextArea(s('#splice-play-js'), {
   mode: 'javascript',
-  theme: 'blackboard'
+  theme: 'duotone-light'
 });
 
 codeMirrorJs.getDoc().markText({line: 0, ch: 0}, {line: 1, ch: 0} ,{ readOnly: true });

@@ -19,16 +19,24 @@ a:active {
 
 #destination {
     background-color: #f7f7f7;
+    /* background-color: black; */
+    /* opacity: 100%; */
+    /* z-index: 2; */
 }
 
 header {
   background-color: inherit;
   position: fixed;
+  /* position: absolute; */
   z-index: 2;
   left: 0;
   padding-left: 50px;
   width: 100%;
   white-space: nowrap;
+}
+
+textarea {
+    z-index: -1;
 }
 
 .page {
