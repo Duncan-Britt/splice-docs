@@ -11,6 +11,12 @@
   <link rel="stylesheet" href="javascripts/node_modules/prismjs/themes/prism-okaidia.css">
   <script src="javascripts/node_modules/prismjs/prism.js"></script>
 
+  <!-- CodeMirror -->
+  <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="node_modules/codemirror/theme/blackboard.css"></script>  
+  <script src="node_modules/codemirror/lib/codemirror.js"></script>
+  <script src="node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="node_modules/codemirror/mode/javascript/javascript.js"></script>  
   <!-- JavaScripts -->
   <script src="javascripts/splicelang.js"></script>
   <script src="javascripts/main.js" defer></script>
@@ -36,6 +42,7 @@
     (:~ partial sidebar_template {}:)
   }:)
   </script>
+  <div id="destination"></div>
 
   <script id="sidebar_template" type="text/x-template">
     <aside class="sidebar (: chapter.id :)">
@@ -560,6 +567,51 @@ Splice.compile(html)({
     <section class="chapter" data-name="Playground" loading="lazy">
 	<section class="page">
 	    <h1>Try splice</h1>
+	    <h2 style="font-size: 12px">Template:</h2>
+	    <textarea id="splice-play-template">
+<p>Hello World!</p>
+<ul>
+    (:~ each people as 'person {
+    <li>
+	(:~ def 'name person.name {}:)
+	(: name :): (: person.job :)
+    </li>			
+    }:)
+</ul>
+(:~ if isanimals {
+<p>Animals:</p>
+<ul>
+    (:~ each animals {
+    <li>(: $.name :): (: $.type :)</li>
+    }:)
+</ul>
+}:)
+	
+	    </textarea>
+	    <h2 style="font-size: 12px">Javascript:</h2>
+	    <textarea id="splice-play-js">
+output.innerHTML = Splice.compile(template)({
+  people: [
+	{
+	  name: 'Bob',
+	  job: 'Fisherman',
+	},
+    {
+	  name: 'Sarah',
+	  job: 'CFO',
+	},
+      ],
+  isanimals: true,
+  animals: [
+    { name: "Heffa", type: 'cow' },
+    { name: "Peppa", type: 'pig' },
+    ],
+}); // EDIT ABOVE THIS LINE
+	    </textarea>
+	    <button id="playground-run">Run</button>
+	    <h2 style="font-size: 12px">Output:</h2>
+	    <div id="playground-output">
+	    </div>
 	</section>	    
     </section>
   </main>

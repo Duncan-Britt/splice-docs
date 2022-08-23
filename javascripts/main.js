@@ -107,7 +107,7 @@ const chapters = sA('.chapter').reduce(function(arr, el) {
 }, []);
 
 Splice.registerPartial('sidebar_template');
-Splice.render({ chapters });
+Splice.render({ chapters }, "#template", "#destination");
 
 sA('.language_guide').forEach(function (el) { el.classList.add('current') });
 s('#tour_of_splice').classList.add('current');
@@ -116,6 +116,49 @@ sA('.tour_of_splice').forEach(function(articleLink) {
 });
 
 document.addEventListener('click', clickHandler);
+
+// Playground
+const codeMirrorSplice = CodeMirror.fromTextArea(s('#splice-play-template'), {
+  mode: 'htmlmixed',
+  theme: 'blackboard'
+});
+
+const codeMirrorJs = CodeMirror.fromTextArea(s('#splice-play-js'), {
+  mode: 'javascript',
+  theme: 'blackboard'
+});
+
+codeMirrorJs.getDoc().markText({line: 0, ch: 0}, {line: 1, ch: 0} ,{ readOnly: true });
+
+s('a[href="#playground"]').addEventListener('click', function(e) {
+  setTimeout(function() {
+    codeMirrorSplice.refresh();
+    codeMirrorJs.refresh();
+    codeMirrorSplice.focus();
+  }, 0);
+});
+
+s('#playground-run').addEventListener('click', function(e) {
+  const templateText = codeMirrorSplice.getValue();
+  const js = codeMirrorJs.getValue();
+  let playgroundScope;
+  let evaluatorFn;
+  try {
+    evaluatorFn = Splice.compile(templateText); 
+  } catch (error) {
+    console.log(error);
+    s('#playground-output').innerHTML = '<span style="color: red">' + error + '</span>';
+    return;
+  }
+  
+  try {
+    playgroundScope = eval('(function() { return {' + js.split('\n').slice(1,-2).join('\n') + '}; })()');
+    const html = evaluatorFn(playgroundScope);
+    s('#playground-output').innerHTML = html;    
+  } catch(error) {
+    s('#playground-output').innerHTML = '<span style="color: red">Error:</span> Syntax Error';
+  }
+});
 
 // SYNTAX HIGHLIGHTING
 // ===================

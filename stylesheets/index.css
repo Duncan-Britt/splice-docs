@@ -1,5 +1,5 @@
 :root {
-  --link: #00b3b3;
+  --link: rgba(0,179,179,1);
   --visited: #80796f;
   --fixed: #f7f7f7;
 }
@@ -15,6 +15,10 @@ a:focus, a:hover {
 }
 a:active {
   color: var(--link);
+}
+
+#destination {
+    background-color: #f7f7f7;
 }
 
 header {
