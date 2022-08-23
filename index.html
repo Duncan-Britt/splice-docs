@@ -111,16 +111,10 @@
   <!-- </head> -->
 
 
-          <p>Call <code>Splice.render</code> and watch your template be rendered in place!</p>
+          <p>Call <code>Splice.render</code> with CSS selectors for your template source and destination elements to render your template in the DOM</p>
 
           <pre><code class="language-javascript">
-Splice.render(yourData, "#id-of-script-tag");
-          </code></pre>
-
-          <p>If your template script tag has an id of <code>template</code>, you may omit the CSS selector.</p>
-
-          <pre><code class="language-javascript">
-Splice.render(yourData);
+Splice.render(yourData, "#template-src", "#destination");
           </code></pre>
 
           <p>For more control, call <code>Splice.compile</code> to return a function which returns a string for a given data set.</p>
@@ -451,18 +445,11 @@ Splice.registerPartial('sidebar', partialTemplate);
         </section>
         <section class="article">
           <h2>Splice.render</h2>
-          <p><code>:: [Object], String</code></p>
-          <p><code>:: [Object]</code></p>
-          <p>The second argument defaults to "#template" and is used as a CSS selector to identify the template within the DOM. The first argument represents the scope for the evaluation of the template.</p>
-
-          <p><code>Splice.render</code> will render the template in place, meaning the resulting HTML will be used to insert DOM nodes in place of where the template <code>&lt;script&gt;</code> tag had been in the HTML file.</p>
+          <p><code>:: [Object], String, String</code></p>
+          <p>The first argument represents the 'scope' for the evaluation of the template. The second argument is used as a CSS selector to identify the <code>script</code> tag containing the template within the DOM. Likewise the third argument is used as a CSS selector to identify the desination element where the final html generated from the template will be rendered.</p>
 
           <pre><code class='language-javascript'>
-Splice.render({ message: 'Hello, World!' });
-          </code></pre>
-
-          <pre><code class='language-javascript'>
-Splice.render({ message: 'Hello, World!' }, "#selector");
+Splice.render({ message: 'Hello, World!' }, "#src", "#destination");
           </code></pre>
         </section>
       </section>
@@ -569,6 +556,11 @@ Splice.compile(html)({
           </code></pre>
         </section>
       </section>
+    </section>
+    <section class="chapter" data-name="Playground" loading="lazy">
+	<section class="page">
+	    <h1>Try splice</h1>
+	</section>	    
     </section>
   </main>
 </body>
